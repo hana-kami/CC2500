@@ -369,7 +369,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HADEWARE\RF;..\HADEWARE\OLED;..\HADEWARE\ADC;..\HADEWARE\LED</IncludePath>
+              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HADEWARE\RF;..\HADEWARE\OLED;..\HADEWARE\ADC;..\HADEWARE\LED;..\HADEWARE\MQTT;..\HADEWARE\device;..\HADEWARE\onenet</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -596,6 +596,21 @@
               <FileName>crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HADEWARE\RF\crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>MqttKit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HADEWARE\MQTT\MqttKit.c</FilePath>
+            </File>
+            <File>
+              <FileName>esp8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HADEWARE\device\esp8266.c</FilePath>
+            </File>
+            <File>
+              <FileName>onenet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HADEWARE\onenet\onenet.c</FilePath>
             </File>
           </Files>
         </Group>

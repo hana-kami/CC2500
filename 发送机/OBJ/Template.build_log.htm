@@ -21,16 +21,27 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.18.0
 Dialog DLL:      TCM.DLL V1.14.14.0
  
 <h2>Project:</h2>
-C:\Users\86134\Desktop\发送机\USER\Template.uvprojx
+D:\gitCode\CC2500\发送机\USER\Template.uvprojx
 Project File Date:  08/21/2023
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 3 (build 300)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Template'
-"..\OBJ\Template.axf" - 0 Error(s), 0 Warning(s).
+compiling main.c...
+..\SYSTEM\usart\string.h(22): warning:  #47-D: incompatible redefinition of macro "__ARMCLIB_VERSION" (declared at line 12 of "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h")
+  #define __ARMCLIB_VERSION 5050106
+main.c(199): warning:  #223-D: function "sprintf" declared implicitly
+                                        sprintf((char *)buff,"M_4    :%d",adc_value_m4);
+main.c(123): warning:  #177-D: variable "num_rx" was declared but never referenced
+        uint16_t num_rx = 0;
+main.c: 3 warnings, 0 errors
+linking...
+Program Size: Code=5852 RO-data=2384 RW-data=64 ZI-data=1992  
+FromELF: creating hex file...
+"..\OBJ\Template.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
-  C:\Users\86134\Desktop\发送机\USER\RTE
+  D:\gitCode\CC2500\发送机\USER\RTE
   C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>

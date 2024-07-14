@@ -32,3 +32,4 @@
 ..\obj\adc.o: ..\STM32F10x_FWLib\inc\misc.h
 ..\obj\adc.o: ..\SYSTEM\delay\delay.h
 ..\obj\adc.o: ..\SYSTEM\sys\sys.h
+..\obj\adc.o: ..\SYSTEM\usart\usart.h

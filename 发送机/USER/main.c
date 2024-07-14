@@ -93,7 +93,7 @@ void Get_Data()//获取传感器数据
 }
 int main(void)
 {
-	McuInit();
+	McuInit();	
 	RfInit();
 	RF_INT_EXTI_Init();
 	RadioInit();

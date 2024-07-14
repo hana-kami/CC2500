@@ -9,6 +9,9 @@
 #include "stdbool.h"
 #include "string.h"
 #include <stdio.h>
+#include "esp8266.h"
+#include "onenet.h"
+#include "mqttkit.h"
 bool EnableMaster = false; //EnableMaster = true 设置为发射模式  EnableMaster = false 设置为接收模式
 
 #define RF_BUFFER_SIZE 64
@@ -18,8 +21,8 @@ uint8_t RXBuffer[RF_BUFFER_SIZE]; // RX buffer
 u8 buff[30];//OLED显示缓存数组
 u16 m4_value;						  //可燃气体检测值
 u16 m6_value;						  //可燃气体检测值
-u16 adc_value_m4;
-u16 adc_value_m6;
+u8 adc_value_m4;
+u8 adc_value_m6;
 u16 received_crc_value;
 uint8_t RFstate;
 void Radio_Process(void);
@@ -59,6 +62,20 @@ void McuInit()
 	 OLED_ShowCHinese(32,2,30);
 	 OLED_ShowCHinese(48,2,31);
 }
+
+void Hardware_Init(void)
+{
+
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	//中断控制器分组设置
+
+	Usart1_Init(115200);							//串口1，打印信息用
+	Usart2_Init(115200);							//串口2，驱动ESP8266用
+	
+	UsartPrintf(USART_DEBUG, " Hardware init OK\r\n");
+	
+}
+
+
 void SE243L_PA_Enable()//SE243L打开PA通道
 {
   GPIO_WriteBit(RF_CPS_PORT, RF_CPS_PIN, Bit_RESET);// CPS=0
@@ -94,16 +111,51 @@ void RadioInit()
 	Strobe(CCxx0x_SIDLE);	
 }
 
+
+void OneNet_FillBufq(char *buf)
+{
+    
+	char text[32];
+	
+	memset(text, 0, sizeof(text));
+	
+	strcpy(buf, ",;");
+	
+	memset(text, 0, sizeof(text));
+	sprintf(text, "MQ1,%d;", adc_value_m4);
+	strcat(buf, text);	
+//	memset(text, 0, sizeof(text));
+//	sprintf(text, "led2,%d;", key2_velue);
+//	strcat(buf, text);
+//	memset(text, 0, sizeof(text));
+//	sprintf(text, "led3,%d;", key3_velue);
+//	strcat(buf, text);
+	
+
+}
+
 int main(void)
 {
+	unsigned short timeCount = 0;	//发送间隔变量
+	
+	unsigned char *dataPtr = NULL;
+	
+
+//	while(OneNet_DevLink())			//接入OneNET
+
 	 McuInit();
 	 RfInit();
 	 RadioInit();
 	 RF_INT_EXTI_Init(); 
+	
 	 BEEP=1;
 	 LED1 = 1 ;
 	 delay_ms(300);
 	 BEEP=0;//全部都初始化完成，蜂鸣器响一下
+		Hardware_Init();				//初始化外围硬件
+	ESP8266_Init();					//初始化ESP8266
+	while(OneNet_DevLink())
+			delay_ms(500);
 	if (EnableMaster == true)
 	{	
 		RFstate = RF_STATE_TX_INIT; //发射模式
@@ -114,16 +166,29 @@ int main(void)
 	}
 	
    while(1)
-	 {		 
-		Radio_Process();	 		
+	 {		
+			
+		Radio_Process();
+//		 OLED_ShowNumber(8,3,timeCount,2,12);
+		 ++timeCount;
+		if(timeCount >= 500)									//发送间隔5s
+				{
+//					char buf[128];
+//	
+//						memset(buf, 0, sizeof(buf));
+//					OneNet_FillBufq(buf);
+					OneNet_SendData(adc_value_m4,adc_value_m6);									//发送数据
+					
+					timeCount = 0;
+					ESP8266_Clear();
+				}		 
 	 }		
  } 
 void Radio_Process(void)
 {
 	uint16_t crc_value;
 	uint16_t num_rx = 0;
-	u16 adc_value_m4;//发送缓冲区中
-	u16 adc_value_m6;
+
 	switch (RFstate)
 	{
 /*--------------------------发射--------------------------------*/
@@ -178,7 +243,7 @@ void Radio_Process(void)
 
 	 if(rfIntRequest)//等待接收完成
 		{
-
+			LED0 = 0;
 			rfIntRequest=0;
 			if(ReceivePacket(RXBuffer, RF_BUFFER_SIZE+1)) 
 			{	
@@ -187,18 +252,29 @@ void Radio_Process(void)
         adc_value_m4 = (RXBuffer[1] << 8) | RXBuffer[0];
         adc_value_m6 = (RXBuffer[3] << 8) | RXBuffer[2];
         received_crc_value = (RXBuffer[4] << 8) | RXBuffer[5];
-		
 				if (received_crc_value == RadioComputeCRC(RXBuffer, 4, CRC_TYPE_IBM)) // CRC check 
 				{
 					delay_ms(100); //延时100ms
-					LED1 = 0;
+					LED0 = 0;
 					delay_ms(100); //延时100ms
-					LED1 = 1;//接收到正确数据 LED闪烁
+					LED0 = 1;//接收到正确数据 LED闪烁
 					OLED_Clear();	
-					sprintf((char *)buff,"M_4    :%d",adc_value_m4);
-					OLED_ShowString(8,1,buff,12);
-					sprintf((char *)buff,"M_6    :%d",adc_value_m6);
-					OLED_ShowString(8,2,buff,12);	
+					OLED_ShowCHinese(16,0,32);
+					OLED_ShowCHinese(32,0,33);
+					OLED_ShowCHinese(48,0,34);
+					OLED_ShowCHinese(64,0,35);
+					sprintf((char *)buff,"Pos 1M_4:%d",adc_value_m4);
+					OLED_ShowString(8,3,buff,12);
+					
+					sprintf((char *)buff,"Pos 1:M_6:%d",adc_value_m6);
+					OLED_ShowString(8,4,buff,12);	
+					if(adc_value_m4 > 60 || adc_value_m6 > 180){
+						BEEP = 1;
+						LED2 = 0;
+					}else{
+						BEEP = 0;
+						LED2 = 1;
+					}
 				}			 
 			}
 			 RFstate = RF_STATE_RX_DONE;	

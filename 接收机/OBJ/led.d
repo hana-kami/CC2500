@@ -32,3 +32,4 @@
 ..\obj\led.o: ..\STM32F10x_FWLib\inc\misc.h
 ..\obj\led.o: ..\SYSTEM\delay\delay.h
 ..\obj\led.o: ..\SYSTEM\sys\sys.h
+..\obj\led.o: ..\SYSTEM\usart\usart.h

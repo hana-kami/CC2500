@@ -31,6 +31,7 @@
 ..\obj\main.o: ..\SYSTEM\sys\sys.h
 ..\obj\main.o: ..\SYSTEM\delay\delay.h
 ..\obj\main.o: ..\SYSTEM\sys\sys.h
+..\obj\main.o: ..\SYSTEM\usart\usart.h
 ..\obj\main.o: ..\HADEWARE\LED\led.h
 ..\obj\main.o: ..\HADEWARE\OLED\oled.h
 ..\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
@@ -40,3 +41,7 @@
 ..\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\main.o: ..\SYSTEM\usart\string.h
 ..\obj\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\main.o: ..\HADEWARE\device\esp8266.h
+..\obj\main.o: ..\HADEWARE\onenet\onenet.h
+..\obj\main.o: ..\HADEWARE\MQTT\mqttkit.h
+..\obj\main.o: ..\HADEWARE\MQTT\Common.h

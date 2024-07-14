@@ -32,5 +32,6 @@
 ..\obj\oled.o: ..\STM32F10x_FWLib\inc\misc.h
 ..\obj\oled.o: ..\SYSTEM\delay\delay.h
 ..\obj\oled.o: ..\SYSTEM\sys\sys.h
+..\obj\oled.o: ..\SYSTEM\usart\usart.h
 ..\obj\oled.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\oled.o: ..\HADEWARE\OLED\oledfont.h
